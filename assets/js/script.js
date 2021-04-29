@@ -2,8 +2,11 @@
 let searchButton = $(".btn");
 let cityNumber = 0;
 
+
 searchButton.on("click", function(event){
   event.preventDefault();
+  console.log("*****");
+  console.log(event);
   let searchInput =  $("#city-search").val();
   if (!searchInput) {
     alert("Enter a city name or choose one from the list.");
@@ -45,8 +48,40 @@ searchButton.on("click", function(event){
 
   $("#list-city"+cityNumber+"-list")[0].click();
   $("#city-search").val("");
-
 })
 
+let listClickEl = $(".list-group");
+
+listClickEl.on("click", function(event){
+  event.preventDefault();
+
+  // Remove cards if there are any
+  if ($(".cardCol")){
+    $( "#cards" ).empty();
+  }
+  // Create cards for the next 5 days
+  for (var i = 0; i < 5; i++) {
+    let cardDiv1 = $("<div>")
+        .addClass("col-sm-2 cardCol")
+        .appendTo("#cards");
+    let cardDiv2 = $("<div>")
+        .addClass("card")
+        .appendTo(cardDiv1);
+    let cardDiv3 = $("<div>")
+        .addClass("card-body")
+        .appendTo(cardDiv2);
+    let cardHead = $("<h5>")
+        .addClass("card-title")
+        .appendTo(cardDiv3);
+    cardHead.text("Tomorrow"); // ***not hc
+    let cardP = $("<p>")
+        .addClass("ard-text")
+        .appendTo(cardDiv3);
+    cardP.text("Stuff for Tomorrow"); // ***not hc
+
+      
+  }
+  
 
 
+})
