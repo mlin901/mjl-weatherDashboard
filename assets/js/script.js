@@ -1,21 +1,59 @@
 
 let searchButton = $(".btn");
 let cityNumber = 0;
+// var returnedUvi;
 
-// FUNCTION - Makes API call
+
+// FUNCTION - Makes API call for UVI info <===============
+function getDataUvi(coordinates) {
+  let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
+  fetch(apiCallUvi)
+  .then(function(response){
+    if (response.status == 200) {
+        response.json().then(function (data2) {  
+        returnedUvi = data2.current.uvi;   
+        })
+    } else {
+        alert("No results for " + cityName);
+    }
+  })
+  .catch(function(){
+      console.log("Bad Request")
+  })
+}
+
+
+// FUNCTION - Makes API call to get data for the day
 function getData(searchInput, source) {
   let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCall)
   .then(function(response){
     if (response.status == 200) {
         response.json().then(function (data) {
-          console.log("*******data*******");
-          console.log(data);
-          if (source == "from field search") {
-            displaySearchInfo(data);
-          } else if (source == "from list item click") {
-            displayItemInfo(data);
-          }
+          console.log("*******data.coord*******");  // ******
+          let coordinates = data.coord;
+          console.log(coordinates);
+          // Get UVI using coordinates from previous API call
+          let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
+          fetch(apiCallUvi)
+          .then(function(response){
+            if (response.status == 200) {
+                response.json().then(function (data2) {  
+                var returnedUvi = data2.current.uvi; 
+                // Call one of the two display functions
+                if (source == "from field search") {
+                  displaySearchInfo(data, returnedUvi);
+                } else if (source == "from list item click") {
+                  displayItemInfo(data);
+                }  
+                })
+            } else {
+                alert("No results for " + cityName);
+            }
+          })
+          .catch(function(){
+              console.log("Bad Request")
+          })
         })
     } else {
         alert("No results for " + searchInput);
@@ -26,13 +64,13 @@ function getData(searchInput, source) {
   })
 }
 
+
 // FUNCTION - displays data for a new search
-function displaySearchInfo(data) {
+function displaySearchInfo(data, returnedUvi) {
   // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
   // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
   let listItem = $("<a>")
       .addClass("list-group-item list-group-item-action")
-      .attr("blah", "****************************")
       .attr("id", "list-city"+cityNumber+"-list") //******
       .attr("data-bs-toggle", "list")
       .attr("href", "#list-city"+cityNumber) // ****
@@ -58,15 +96,27 @@ function displaySearchInfo(data) {
   displayDate(tabContDate);        
       // icon
   iconId = data.weather[0].icon
-  iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"
+  iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"  // ***Remove @2x ?????
   let tabContIcon = $("<img>")
       .addClass("tab-icon")
       .attr("src",iconUrl)
       .attr("alt", "Weather icon")
       .appendTo(tabContCityName);
       // temp
+  let tabContTemp = $("<p>")
+      .addClass("tab-temp")
+      .appendTo(tabContCityName);
+  tabContTemp.text("Temperature: " + data.main.temp);  // ****must convert
       // humidity
-      // uv index
+  let tabContHumidity = $("<p>")
+      .addClass("tab-humidity")
+      .appendTo(tabContCityName);
+  tabContHumidity.text("Humidity: " + data.main.humidity);
+      // uv index   ****needs to be color coded
+  let tabContUvi = $("<p>")
+      .addClass("tab-uvi")
+      .appendTo(tabContCityName);
+  tabContUvi.text(returnedUvi + "Oh, heck yeah!");
 
   // Programatically click item that was just searched on...
   $("#list-city"+cityNumber+"-list")[0].click();
@@ -122,8 +172,8 @@ searchButton.on("click", function(event){
   getData(searchInput, source);
 })
 
-let listClickEl = $(".list-group");  
 // EVENT LISTENER for list item clicks
+let listClickEl = $(".list-group");  
 listClickEl.on("click", function(event){
   event.preventDefault();
   let clickedItem = event.target;
@@ -132,3 +182,8 @@ listClickEl.on("click", function(event){
   getData(clickedItemText, source)
 })
 
+function initialDisplay() {
+  console.log("******Need to do something with this");  // *******
+}
+
+initialDisplay();
