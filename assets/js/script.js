@@ -68,14 +68,17 @@ function displaySearchInfo(data, returnedUvi) {
   // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
   let listItem = $("<a>")
       .addClass("list-group-item list-group-item-action")
-      .attr("id", "list-city"+cityNumber+"-list") //******
+      .attr("id", "list-city"+cityNumber+"-list") 
       .attr("data-bs-toggle", "list")
-      .attr("href", "#list-city"+cityNumber) // ****
+      .attr("href", "#list-city"+cityNumber) 
       .attr("role", "tab")
-      .attr("aria-controls", "city"+cityNumber)  // **** - don't hard code
+      .attr("aria-controls", "city"+cityNumber)  
       .prependTo(".list-group");
   let listItemText  = $("#list-city"+cityNumber+"-list");
   listItemText.text(data.name);
+  // Add to local storage
+  addEntry(data.name, cityNumber);
+
   // The following builds these: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
   // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
       // name
@@ -178,7 +181,7 @@ function displayCardInfo(data2) {
 function displayDate(tabContDate) {
   var today = moment().format('dddd, MMMM Do YYYY');
   tabContDate.text(today);
-}
+}  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 // EVENT LISTENER for Search button clicks
 searchButton.on("click", function(event){
@@ -202,7 +205,6 @@ listClickEl.on("click", function(event){
   let source = "from list item click"
   getData(clickedItemText, source)
 })
-
 
 // FUNCTION to convert date - adapted from https://coderrocketfuel.com/article/convert-a-unix-timestamp-to-a-date-in-vanilla-javascript 
 function convertDate(utcDate) {
@@ -228,9 +230,28 @@ function changeUviColor(uviVal) {
   }
 }
 
+// Function to add entry to local storage. Adapted from https://stackoverflow.com/questions/19635077/adding-objects-to-array-in-localstorage/55968743
+function addEntry(cityName, cityNum) {
+  // Parse any JSON previously stored in allEntries
+  var existingEntries = JSON.parse(localStorage.getItem("mjlWeather"));
+  if (existingEntries == null) existingEntries = [];
+  var entry = {
+      "title": cityNum,
+      "text": cityName
+  };
+  existingEntries.push(entry);
+  localStorage.setItem("mjlWeather", JSON.stringify(existingEntries));
+};
+
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function initialDisplay() {
-  console.log("******Need to do something with this");  // *******
+  var existingEntries = JSON.parse(localStorage.getItem("mjlWeather"));
+  if (existingEntries !== null) {
+    for (let i = 0; i < existingEntries.length; i++) {
+      console.log("blah");
+    }
+  }
+
 }
 
 initialDisplay();
