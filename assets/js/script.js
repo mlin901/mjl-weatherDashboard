@@ -38,10 +38,8 @@ searchButton.on("click", function(event){
 })
 
 function displaySearchInfo(data, searchInput) {
-  // The following builds these:
-  // <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
-  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior
-  // And note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
+  // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
+  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
   let listItem = $("<a>")
       .addClass("list-group-item list-group-item-action")
       .attr("blah", "****************************")
@@ -52,26 +50,49 @@ function displaySearchInfo(data, searchInput) {
       .attr("aria-controls", "city"+cityNumber)  // **** - don't hard code
       .prependTo(".list-group");
   let listItemText  = $("#list-city"+cityNumber+"-list");
-  listItemText.text(searchInput);
-  // The following builds these:
-  // <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
-  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior
-  // And note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
-  let tabContItem = $("<div>")
+  listItemText.text(data.name);
+  // The following builds these: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
+  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
+  let tabContCityName = $("<div>")
       .addClass("tab-pane fade")
       .attr("id", "list-city"+cityNumber)
       .attr("role", "tabpanel")
       .attr("aria-labelledby", "list-city"+cityNumber+"-list")
       .prependTo(".tab-content");
   let tabContItemText  = $("#list-city"+cityNumber);
-  tabContItemText.text(searchInput);
+  tabContItemText.text(data.name);
 
+  let tabContDate = $("<p>")
+      .addClass("tab-date")
+      .appendTo(tabContCityName);
+  displayDate(tabContDate);
+ 
+  // <img src="img_girl.jpg" alt="Girl in a jacket" width="500" height="600">
+  iconId = data.weather[0].icon
+  iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"
+  let tabContIcon = $("<img>")
+      .addClass("tab-icon")
+      .attr("src",iconUrl)
+      .attr("alt", "Weather icon")
+      .appendTo(tabContCityName);
+  // tabContIcon.text(data.weather[0].icon);
+  // tabContIcon.text(iconUrl);
+
+  // Programatically click item that was just searched on...
   $("#list-city"+cityNumber+"-list")[0].click();
+  // ...and clear the search field
   $("#city-search").val("");
 }
 
 
-
+// Function - display the date and time (uses Moment.js)
+function displayDate(tabContDate) {
+  var today = moment().format('dddd, MMMM Do YYYY');
+  // var time = moment().format('h:mm a');
+  tabContDate.text(today);
+  // timeDisplayEl.text(time);
+  // timeDependentColor(today);
+}
 // ******************************************************************
 // ******************************************************************
 
@@ -93,7 +114,7 @@ listClickEl.on("click", function(event){
     $( "#cards" ).empty();
   }
   console.log("blah");
-  
+
   // Create cards for the next 5 days
   for (var i = 0; i < 5; i++) {  // *******5 shouldn't be hc
     let cardDiv1 = $("<div>")
