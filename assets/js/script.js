@@ -30,9 +30,7 @@ function getData(searchInput, source) {
   .then(function(response){
     if (response.status == 200) {
         response.json().then(function (data) {
-          console.log("*******data.coord*******");  // ******
           let coordinates = data.coord;
-          console.log(coordinates);
           // Get UVI using coordinates from previous API call
           let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
           fetch(apiCallUvi)
@@ -120,6 +118,7 @@ function displaySearchInfo(data, returnedUvi) {
       .addClass("uvi-span")
       .appendTo(tabContUvi);
   tabContUviSpan.text(returnedUvi);
+  changeUviColor(returnedUvi);
 
   // Programatically click item that was just searched on...
   $("#list-city"+cityNumber+"-list")[0].click();
@@ -133,8 +132,6 @@ function displayCardInfo(data2) {
   if ($(".cardCol")){
     $( "#cards" ).empty();
   }
-  console.log("++++++++");
-  console.log(data2);
   // Create cards for the next 5 days
   for (var i = 1; i < 6; i++) {  // *******5 shouldn't be hc????????
     let cardDiv1 = $("<div>")
@@ -213,10 +210,22 @@ function convertDate(utcDate) {
   let milliseconds = utcDate * 1000; 
   let dateObject = new Date(milliseconds);
   let humanDateFormat = dateObject.toLocaleString(); 
-  console.log(humanDateFormat);
   humanDateFormat = humanDateFormat.slice(0, -12);
-  console.log(humanDateFormat);
   return humanDateFormat;
+}
+
+function changeUviColor(uviVal) {
+  if (uviVal < 3) {
+    $(".uvi-span").css("background-color", "green");
+  } else if (uviVal < 6) {
+    $(".uvi-span").css("background-color", "yellow");
+  } else if (uviVal < 8) {
+    $(".uvi-span").css("background-color", "orange");
+  } else if (uviVal < 11) {
+    $(".uvi-span").css("background-color", "red");
+  } else {
+    $(".uvi-span").css("background-color", "purple");
+  }
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
