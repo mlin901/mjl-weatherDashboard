@@ -2,6 +2,7 @@
 let searchButton = $(".btn");
 let cityNumber = 0;
 
+// FUNCTION - Makes API call
 function getData(apiCall, searchInput) {
   fetch(apiCall)
   .then(function(response){
@@ -20,7 +21,8 @@ function getData(apiCall, searchInput) {
   })
 }
 
-// Evemt listener for Search button clicks
+
+// EVENT LISTENER for Search button clicks
 searchButton.on("click", function(event){
   event.preventDefault();
   // console.log("*****");
@@ -37,6 +39,9 @@ searchButton.on("click", function(event){
   getData(apiCall, searchInput);
 })
 
+
+
+// FUNCTION - displays data for a new search
 function displaySearchInfo(data, searchInput) {
   // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
   // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
@@ -85,14 +90,12 @@ function displaySearchInfo(data, searchInput) {
 }
 
 
-// Function - display the date and time (uses Moment.js)
+// FUNCION - display the date (uses Moment.js)  ******Should instead use API date data
 function displayDate(tabContDate) {
   var today = moment().format('dddd, MMMM Do YYYY');
-  // var time = moment().format('h:mm a');
   tabContDate.text(today);
-  // timeDisplayEl.text(time);
-  // timeDependentColor(today);
 }
+
 // ******************************************************************
 // ******************************************************************
 
