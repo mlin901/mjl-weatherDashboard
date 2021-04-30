@@ -1,4 +1,3 @@
-
 let searchButton = $(".btn");
 let cityNumber = 0;
 // var returnedUvi;
@@ -25,7 +24,8 @@ function getDataUvi(coordinates) {
 
 // FUNCTION - Makes API call to get data for the day
 function getData(searchInput, source) {
-  let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&appid=ab49e3c91f890388f51d73286073c3a1`;
+  let units = "imperial";
+  let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCall)
   .then(function(response){
     if (response.status == 200) {
@@ -34,7 +34,7 @@ function getData(searchInput, source) {
           let coordinates = data.coord;
           console.log(coordinates);
           // Get UVI using coordinates from previous API call
-          let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
+          let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
           fetch(apiCallUvi)
           .then(function(response){
             if (response.status == 200) {
@@ -44,7 +44,7 @@ function getData(searchInput, source) {
                 if (source == "from field search") {
                   displaySearchInfo(data, returnedUvi);
                 } else if (source == "from list item click") {
-                  displayItemInfo(data);
+                  displayCardInfo(data2);
                 }  
                 })
             } else {
@@ -53,7 +53,7 @@ function getData(searchInput, source) {
           })
           .catch(function(){
               console.log("Bad Request")
-          })
+          })  // end of UVI-retrieval fetch-catch
         })
     } else {
         alert("No results for " + searchInput);
@@ -63,7 +63,6 @@ function getData(searchInput, source) {
       console.log("Bad Request")
   })
 }
-
 
 // FUNCTION - displays data for a new search
 function displaySearchInfo(data, returnedUvi) {
@@ -99,7 +98,7 @@ function displaySearchInfo(data, returnedUvi) {
   iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"  // ***Remove @2x ?????
   let tabContIcon = $("<img>")
       .addClass("tab-icon")
-      .attr("src",iconUrl)
+      .attr("src", iconUrl)
       .attr("alt", "Weather icon")
       .appendTo(tabContCityName);
       // temp
@@ -116,7 +115,11 @@ function displaySearchInfo(data, returnedUvi) {
   let tabContUvi = $("<p>")
       .addClass("tab-uvi")
       .appendTo(tabContCityName);
-  tabContUvi.text(returnedUvi + "Oh, heck yeah!");
+  tabContUvi.text("UV index: ");
+  let tabContUviSpan = $("<span>")
+      .addClass("uvi-span")
+      .appendTo(tabContUvi);
+  tabContUviSpan.text(returnedUvi);
 
   // Programatically click item that was just searched on...
   $("#list-city"+cityNumber+"-list")[0].click();
@@ -125,14 +128,15 @@ function displaySearchInfo(data, returnedUvi) {
 }
 
 // FUNCTION - displays data for a clicked list item
-function displayItemInfo(data) {
+function displayCardInfo(data2) {
   // Remove cards if there are any
   if ($(".cardCol")){
     $( "#cards" ).empty();
   }
-  console.log("blah");
+  console.log("++++++++");
+  console.log(data2);
   // Create cards for the next 5 days
-  for (var i = 0; i < 5; i++) {  // *******5 shouldn't be hc
+  for (var i = 1; i < 6; i++) {  // *******5 shouldn't be hc????????
     let cardDiv1 = $("<div>")
         .addClass("col-sm-2 cardCol")
         .appendTo("#cards");
@@ -142,18 +146,38 @@ function displayItemInfo(data) {
     let cardDiv3 = $("<div>")
         .addClass("card-body")
         .appendTo(cardDiv2);
+    // date - daily.date
     let cardHead = $("<h5>")
         .addClass("card-title")
         .appendTo(cardDiv3);
-    cardHead.text("Tomorrow"); // ***not hc
-    let cardP = $("<p>")
-        .addClass("card-text")
+    dateVal = data2.daily[i].dt;
+    dateVal = convertDate(dateVal);
+    cardHead.text(dateVal); // +++++date
+    // icon - daily.weather.icon
+    let cardIconId = data2.daily[i].weather[0].icon;
+    cardIconUrl = "http://openweathermap.org/img/wn/"+cardIconId+".png"
+    let cardIcon = $("<img>")
+        .addClass("card-icon")
+        .attr("src", cardIconUrl)
         .appendTo(cardDiv3);
-    cardP.text("Stuff for Tomorrow"); // ***not hc
+    // temp  - daily.temp.day
+    let cardTemp =  $("<p>")
+        .addClass("card-temp")
+        .appendTo(cardDiv3);
+    tempVal = data2.daily[i].temp.day;
+    cardTemp.text("Temp: " + tempVal); 
+    // humidity
+    let cardHumidity =  $("<p>")
+        .addClass("card-humidity")
+        .appendTo(cardDiv3);
+    humidityVal = data2.daily[i].humidity;
+    cardHumidity.text("Humidity: " + humidityVal); 
+
   }
 } 
 
-// FUNCION - display the date (uses Moment.js)  ******Should instead use API date data**************
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// FUNCION - display the date (uses Moment.js)  // -------Should instead use API date data----------
 function displayDate(tabContDate) {
   var today = moment().format('dddd, MMMM Do YYYY');
   tabContDate.text(today);
@@ -182,6 +206,20 @@ listClickEl.on("click", function(event){
   getData(clickedItemText, source)
 })
 
+
+// FUNCTION to convert date - adapted from https://coderrocketfuel.com/article/convert-a-unix-timestamp-to-a-date-in-vanilla-javascript 
+function convertDate(utcDate) {
+  let unixTimestamp = utcDate;
+  let milliseconds = utcDate * 1000; 
+  let dateObject = new Date(milliseconds);
+  let humanDateFormat = dateObject.toLocaleString(); 
+  console.log(humanDateFormat);
+  humanDateFormat = humanDateFormat.slice(0, -12);
+  console.log(humanDateFormat);
+  return humanDateFormat;
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function initialDisplay() {
   console.log("******Need to do something with this");  // *******
 }
