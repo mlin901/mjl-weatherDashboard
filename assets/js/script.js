@@ -3,14 +3,19 @@ let searchButton = $(".btn");
 let cityNumber = 0;
 
 // FUNCTION - Makes API call
-function getData(apiCall, searchInput) {
+function getData(searchInput, source) {
+  let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCall)
   .then(function(response){
     if (response.status == 200) {
         response.json().then(function (data) {
           console.log("*******data*******");
           console.log(data);
-            displaySearchInfo(data, searchInput)  //  **********************
+          if (source == "from field search") {
+            displaySearchInfo(data);
+          } else if (source == "from list item click") {
+            displayItemInfo(data);
+          }
         })
     } else {
         alert("No results for " + searchInput);
@@ -21,9 +26,8 @@ function getData(apiCall, searchInput) {
   })
 }
 
-
 // FUNCTION - displays data for a new search
-function displaySearchInfo(data, searchInput) {
+function displaySearchInfo(data) {
   // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
   // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
   let listItem = $("<a>")
@@ -70,55 +74,13 @@ function displaySearchInfo(data, searchInput) {
   $("#city-search").val("");
 }
 
-
-
-// EVENT LISTENER for Search button clicks
-searchButton.on("click", function(event){
-  event.preventDefault();
-  // console.log("*****");
-  // console.log(event);
-  let searchInput =  $("#city-search").val();
-  if (!searchInput) {
-    alert("Enter a city name or choose one from the list.");
-    return;
-  }
-  // console.log(searchInput);
-  let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&appid=ab49e3c91f890388f51d73286073c3a1`
-  cityNumber++;
-
-  getData(apiCall, searchInput);
-})
-
-
-
-// FUNCION - display the date (uses Moment.js)  ******Should instead use API date data**************
-function displayDate(tabContDate) {
-  var today = moment().format('dddd, MMMM Do YYYY');
-  tabContDate.text(today);
-}
-
-// ******************************************************************
-// ******************************************************************
-
-
-// ******Add API search bit to the following (cf. getData and the call to that function)
-//      Then split out display method, as I did with the above
-
-let listClickEl = $(".list-group");  
-// Event listener for list item clicks
-listClickEl.on("click", function(event){
-  event.preventDefault();
-  var clickedItem = event.target;
-  // console.log("##############");
-  // console.log(event);
-  // console.log(clickedItem);
-
+// FUNCTION - displays data for a clicked list item
+function displayItemInfo(data) {
   // Remove cards if there are any
   if ($(".cardCol")){
     $( "#cards" ).empty();
   }
   console.log("blah");
-
   // Create cards for the next 5 days
   for (var i = 0; i < 5; i++) {  // *******5 shouldn't be hc
     let cardDiv1 = $("<div>")
@@ -139,4 +101,34 @@ listClickEl.on("click", function(event){
         .appendTo(cardDiv3);
     cardP.text("Stuff for Tomorrow"); // ***not hc
   }
+} 
+
+// FUNCION - display the date (uses Moment.js)  ******Should instead use API date data**************
+function displayDate(tabContDate) {
+  var today = moment().format('dddd, MMMM Do YYYY');
+  tabContDate.text(today);
+}
+
+// EVENT LISTENER for Search button clicks
+searchButton.on("click", function(event){
+  event.preventDefault();
+  let searchInput =  $("#city-search").val();
+  if (!searchInput) {
+    alert("Enter a city name or choose one from the list.");
+    return;
+  }
+  cityNumber++;
+  var source = "from field search";
+  getData(searchInput, source);
 })
+
+let listClickEl = $(".list-group");  
+// EVENT LISTENER for list item clicks
+listClickEl.on("click", function(event){
+  event.preventDefault();
+  let clickedItem = event.target;
+  clickedItemText = clickedItem.text
+  let source = "from list item click"
+  getData(clickedItemText, source)
+})
+
