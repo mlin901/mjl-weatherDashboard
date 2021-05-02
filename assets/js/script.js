@@ -118,12 +118,12 @@ function displaySearchInfo(data, returnedUvi) {
     let tabContTemp = $("<p>")
         .addClass("tab-temp")
         .appendTo(tabContCityName);
-    tabContTemp.text("Temperature: " + data.main.temp);  
+    tabContTemp.text("Temperature: " + data.main.temp + " F");  
         // humidity
     let tabContHumidity = $("<p>")
         .addClass("tab-humidity")
         .appendTo(tabContCityName);
-    tabContHumidity.text("Humidity: " + data.main.humidity);
+    tabContHumidity.text("Humidity: " + data.main.humidity + "%");
         // uv index   
     let tabContUvi = $("<p>")
         .addClass("tab-uvi")
@@ -178,13 +178,13 @@ function displayCardInfo(data2) {
         .addClass("card-temp")
         .appendTo(cardDiv3);
     tempVal = data2.daily[i].temp.day;
-    cardTemp.text("Temp: " + tempVal); 
+    cardTemp.text("Temp: " + tempVal + " F"); 
     // humidity
     let cardHumidity =  $("<p>")
         .addClass("card-humidity")
         .appendTo(cardDiv3);
     humidityVal = data2.daily[i].humidity;
-    cardHumidity.text("Humidity: " + humidityVal); 
+    cardHumidity.text("Humidity: " + humidityVal + "%"); 
   }
 } 
 
