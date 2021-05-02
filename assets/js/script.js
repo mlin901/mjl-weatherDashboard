@@ -2,8 +2,7 @@ let searchButton = $(".btn");
 let cityNumber = 0;
 // var returnedUvi;
 
-
-// FUNCTION - Makes API call for UVI info <===============
+// FUNCTION - Makes API call for UVI info <
 function getDataUvi(coordinates) {
   let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCallUvi)
@@ -20,7 +19,6 @@ function getDataUvi(coordinates) {
       console.log("Bad Request")
   })
 }
-
 
 // FUNCTION - Makes API call to get data for the day
 function getData(searchInput, source) {
@@ -64,68 +62,83 @@ function getData(searchInput, source) {
 
 // FUNCTION - displays data for a new search
 function displaySearchInfo(data, returnedUvi) {
-  // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
-  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
-  let listItem = $("<a>")
-      .addClass("list-group-item list-group-item-action")
-      .attr("id", "list-city"+cityNumber+"-list") 
-      .attr("data-bs-toggle", "list")
-      .attr("href", "#list-city"+cityNumber) 
-      .attr("role", "tab")
-      .attr("aria-controls", "city"+cityNumber)  
-      .prependTo(".list-group");
-  let listItemText  = $("#list-city"+cityNumber+"-list");
-  listItemText.text(data.name);
-  // Add to local storage
-  addEntry(data.name, cityNumber);
 
-  // The following builds these: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
-  // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
-      // name
-  let tabContCityName = $("<div>")
-      .addClass("tab-pane fade")
-      .attr("id", "list-city"+cityNumber)
-      .attr("role", "tabpanel")
-      .attr("aria-labelledby", "list-city"+cityNumber+"-list")
-      .prependTo(".tab-content");
-  tabContCityName.text(data.name);
-      // date
-  let tabContDate = $("<p>")
-      .addClass("tab-date")
-      .appendTo(tabContCityName);
-  displayDate(tabContDate);        
-      // icon
-  iconId = data.weather[0].icon
-  iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"  // ***Remove @2x ?????
-  let tabContIcon = $("<img>")
-      .addClass("tab-icon")
-      .attr("src", iconUrl)
-      .attr("alt", "Weather icon")
-      .appendTo(tabContCityName);
-      // temp
-  let tabContTemp = $("<p>")
-      .addClass("tab-temp")
-      .appendTo(tabContCityName);
-  tabContTemp.text("Temperature: " + data.main.temp);  // ****must convert
-      // humidity
-  let tabContHumidity = $("<p>")
-      .addClass("tab-humidity")
-      .appendTo(tabContCityName);
-  tabContHumidity.text("Humidity: " + data.main.humidity);
-      // uv index   ****needs to be color coded
-  let tabContUvi = $("<p>")
-      .addClass("tab-uvi")
-      .appendTo(tabContCityName);
-  tabContUvi.text("UV index: ");
-  let tabContUviSpan = $("<span>")
-      .addClass("uvi-span")
-      .appendTo(tabContUvi);
-  tabContUviSpan.text(returnedUvi);
-  changeUviColor(returnedUvi);
+  $(".tab-pane").removeClass("show");
+  $(".tab-pane").removeClass("active");
 
-  // Programatically click item that was just searched on...
-  $("#list-city"+cityNumber+"-list")[0].click();
-  // ...and clear the search field
+  var notThere = true;
+  $('.list-group-item').each(function() {
+    if ($(this).text() === data.name) {
+      notThere = false;
+      getData(data.name, "from list item click")
+      alert("Enter a city that is not in the list, or select a city from the list.");
+    }
+  });
+  if (notThere == true) {
+    cityNumber++;
+    // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
+    // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
+    let listItem = $("<a>")
+        .addClass("list-group-item list-group-item-action")
+        .attr("id", "list-city"+cityNumber+"-list") 
+        .attr("data-bs-toggle", "list")
+        .attr("href", "#list-city"+cityNumber) 
+        .attr("role", "tab")
+        .attr("aria-controls", "city"+cityNumber)  
+        .prependTo(".list-group");
+    let listItemText = $("#list-city"+cityNumber+"-list");
+    listItemText.text(data.name);
+    // Add to local storage
+    addToLocalStorage(data.name, cityNumber);
+    // $("#nav-tabContent").empty();
+    // The following builds these: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
+    // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
+        // name
+    let tabContCityName = $("<div>")
+        .addClass("tab-pane fade")
+        .attr("id", "list-city"+cityNumber)
+        .attr("role", "tabpanel")
+        .attr("aria-labelledby", "list-city"+cityNumber+"-list")
+        .prependTo(".tab-content");
+    tabContCityName.text(data.name);
+        // date
+    let tabContDate = $("<p>")
+        .addClass("tab-date")
+        .appendTo(tabContCityName);
+    displayDate(tabContDate);        
+        // icon
+    iconId = data.weather[0].icon
+    iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"  
+    let tabContIcon = $("<img>")
+        .addClass("tab-icon")
+        .attr("src", iconUrl)
+        .attr("alt", "Weather icon")
+        .appendTo(tabContCityName);
+        // temp
+    let tabContTemp = $("<p>")
+        .addClass("tab-temp")
+        .appendTo(tabContCityName);
+    tabContTemp.text("Temperature: " + data.main.temp);  
+        // humidity
+    let tabContHumidity = $("<p>")
+        .addClass("tab-humidity")
+        .appendTo(tabContCityName);
+    tabContHumidity.text("Humidity: " + data.main.humidity);
+        // uv index   
+    let tabContUvi = $("<p>")
+        .addClass("tab-uvi")
+        .appendTo(tabContCityName);
+    tabContUvi.text("UV index: ");
+    let tabContUviSpan = $("<span>")
+        .addClass("uvi-span")
+        .appendTo(tabContUvi);
+    tabContUviSpan.text(returnedUvi);
+    color = changeUviColor(returnedUvi);
+    tabContUviSpan.css("background-color", color);
+    // Programatically click item that was just searched on.
+    $("#list-city"+cityNumber+"-list")[0].click();
+  }
+  // Clear the search field
   $("#city-search").val("");
 }
 
@@ -136,7 +149,7 @@ function displayCardInfo(data2) {
     $( "#cards" ).empty();
   }
   // Create cards for the next 5 days
-  for (var i = 1; i < 6; i++) {  // *******5 shouldn't be hc????????
+  for (var i = 1; i <= 5; i++) {  
     let cardDiv1 = $("<div>")
         .addClass("col-sm-2 cardCol")
         .appendTo("#cards");
@@ -152,7 +165,7 @@ function displayCardInfo(data2) {
         .appendTo(cardDiv3);
     dateVal = data2.daily[i].dt;
     dateVal = convertDate(dateVal);
-    cardHead.text(dateVal); // +++++date
+    cardHead.text(dateVal); 
     // icon - daily.weather.icon
     let cardIconId = data2.daily[i].weather[0].icon;
     cardIconUrl = "http://openweathermap.org/img/wn/"+cardIconId+".png"
@@ -172,39 +185,8 @@ function displayCardInfo(data2) {
         .appendTo(cardDiv3);
     humidityVal = data2.daily[i].humidity;
     cardHumidity.text("Humidity: " + humidityVal); 
-
   }
 } 
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-// FUNCION - display the date (uses Moment.js)  // -------Should instead use API date data----------
-function displayDate(tabContDate) {
-  var today = moment().format('dddd, MMMM Do YYYY');
-  tabContDate.text(today);
-}  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-// EVENT LISTENER for Search button clicks
-searchButton.on("click", function(event){
-  event.preventDefault();
-  let searchInput =  $("#city-search").val();
-  if (!searchInput) {
-    alert("Enter a city name or choose one from the list.");
-    return;
-  }
-  cityNumber++;
-  var source = "from field search";
-  getData(searchInput, source);
-})
-
-// EVENT LISTENER for list item clicks
-let listClickEl = $(".list-group");  
-listClickEl.on("click", function(event){
-  event.preventDefault();
-  let clickedItem = event.target;
-  clickedItemText = clickedItem.text
-  let source = "from list item click"
-  getData(clickedItemText, source)
-})
 
 // FUNCTION to convert date - adapted from https://coderrocketfuel.com/article/convert-a-unix-timestamp-to-a-date-in-vanilla-javascript 
 function convertDate(utcDate) {
@@ -218,40 +200,75 @@ function convertDate(utcDate) {
 
 function changeUviColor(uviVal) {
   if (uviVal < 3) {
-    $(".uvi-span").css("background-color", "green");
+    return "green";
   } else if (uviVal < 6) {
-    $(".uvi-span").css("background-color", "yellow");
+    return "yellow";
   } else if (uviVal < 8) {
-    $(".uvi-span").css("background-color", "orange");
+    return "orange";
   } else if (uviVal < 11) {
-    $(".uvi-span").css("background-color", "red");
+    return "red";
   } else {
-    $(".uvi-span").css("background-color", "purple");
+    return "purple";
   }
 }
 
 // Function to add entry to local storage. Adapted from https://stackoverflow.com/questions/19635077/adding-objects-to-array-in-localstorage/55968743
-function addEntry(cityName, cityNum) {
-  // Parse any JSON previously stored in allEntries
+function addToLocalStorage(cityName, cityNum) {
+  // Parse data previously stored in allEntries
   var existingEntries = JSON.parse(localStorage.getItem("mjlWeather"));
   if (existingEntries == null) existingEntries = [];
   var entry = {
-      "title": cityNum,
-      "text": cityName
+      "number": cityNum,
+      "name": cityName
   };
-  existingEntries.push(entry);
-  localStorage.setItem("mjlWeather", JSON.stringify(existingEntries));
+  if(existingEntries.some(entry => entry.name === cityName)){
+    // alert("Object found inside the array."); // ********
+  } else{
+    existingEntries.push(entry);
+    localStorage.setItem("mjlWeather", JSON.stringify(existingEntries));
+  }
 };
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// FUNCTION - display the date in tab area (uses Moment.js)  
+function displayDate(tabContDate) {
+  var today = moment().format('dddd, MMMM Do YYYY');
+  tabContDate.text(today);
+}  
+
+// EVENT LISTENER for Search button clicks
+searchButton.on("click", function(event){
+  event.preventDefault();
+  let searchInput =  $("#city-search").val();
+  if (!searchInput) {
+    alert("Enter a city name or choose one from the list.");
+    return;
+  }
+  var source = "from field search";
+  getData(searchInput, source);
+})
+
+// EVENT LISTENER for list item clicks
+let listClickEl = $(".list-group");  
+listClickEl.on("click", function(event){
+  event.preventDefault();
+  let clickedItem = event.target;
+  clickedItemText = clickedItem.text
+  let source = "from list item click"
+
+  getData(clickedItemText, source)
+})
+
+// FUNCTION - Populate page when refreshed or first opened
 function initialDisplay() {
   var existingEntries = JSON.parse(localStorage.getItem("mjlWeather"));
   if (existingEntries !== null) {
     for (let i = 0; i < existingEntries.length; i++) {
-      console.log("blah");
+      var storedEntry = existingEntries[i];
+      let source = "from field search";
+      getData(storedEntry.name, source);
+      // getData(storedEntry.i, source);
     }
   }
-
 }
 
 initialDisplay();
