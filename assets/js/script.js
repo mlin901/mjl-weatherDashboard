@@ -3,7 +3,7 @@ let cityNumber = 0;
 
 // FUNCTION - Makes API call for UVI info 
 function getDataUvi(coordinates) {
-  let apiCallUvi = `http://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
+  let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCallUvi)
   .then(function(response){
     if (response.status == 200) {
@@ -24,14 +24,14 @@ function getDataUvi(coordinates) {
 function getData(searchInput, source) {
   let units = "imperial";
   // Main API call
-  let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
+  let apiCall = `https://api.openweathermap.org/data/2.5/weather?q=${searchInput}&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCall)
   .then(function(response){
     if (response.status == 200) {
         response.json().then(function (data) {
           let coordinates = data.coord;
           // Query API for UVI using coordinates from previous API call
-          let apiCallUvi = `http://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
+          let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
           fetch(apiCallUvi)
           .then(function(response){
             if (response.status == 200) {
@@ -109,7 +109,7 @@ function displaySearchInfo(data, returnedUvi) {
     displayDate(tabContDate);        
         // icon
     iconId = data.weather[0].icon
-    iconUrl = "http://openweathermap.org/img/wn/"+iconId+"@2x.png"  
+    iconUrl = "https://openweathermap.org/img/wn/"+iconId+"@2x.png"  
     let tabContIcon = $("<img>")
         .addClass("tab-icon")
         .attr("src", iconUrl)
@@ -170,7 +170,7 @@ function displayCardInfo(data2) {
     cardHead.text(dateVal); 
     // icon - daily.weather.icon
     let cardIconId = data2.daily[i].weather[0].icon;
-    cardIconUrl = "http://openweathermap.org/img/wn/"+cardIconId+".png"
+    cardIconUrl = "https://openweathermap.org/img/wn/"+cardIconId+".png"
     let cardIcon = $("<img>")
         .addClass("card-icon")
         .attr("src", cardIconUrl)
