@@ -8,7 +8,7 @@ I WANT to see the weather outlook for multiple cities
 SO THAT I can plan a trip accordingly.
 ```
 
-Here is the link to the published webapp I created: *********. A screen capture of the web app is at the bottom of this readme.
+Here is the link to the published webapp I created: [https://mlin901.github.io/mjl-weatherDashboard/](https://mlin901.github.io/mjl-weatherDashboard/). A screen capture of the web app is at the bottom of this readme.
 
 This web app includes a search field for city names. When user enters a city name and clicks Go, the dashbard app
 * uses the city name for two API searches. (It takes two to populate the different kinds of information required for this assignment)
