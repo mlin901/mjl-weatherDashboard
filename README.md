@@ -20,6 +20,7 @@ This web app includes a search field for city names. When user enters a city nam
 ## Known issues
 
 There are a few issues/shortcomings that if addressed would improve this application:
+* Not responsive. It was responsive at first, but something along the way changed that (and I ran out of time to fix that problem).
 * Didn't have time to figure out how to allow the user to start their search by pressing enter in the search field once they enter the city name
 * Should probably put up info text if one of the values (e.g., UVI) is 0
 * Should probably put up a message when there is no info returned for the designated city
