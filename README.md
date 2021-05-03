@@ -27,3 +27,5 @@ There are a few issues/shortcomings that if addressed would improve this applica
 * Something to handle multiple cities with same name (e.g., "Auburn, CA" vs "Auburn, AL")
 
 The application works, but it was developed far too orgainically. In the early planning stages (e.g., during the design/pseudocode state) I didn't account for the challanges I'd be facing with multiple API calls and two search sources (the search field and the list of searched locations). Additionally, because I had to wait a bit for openweather.org to send me a key, I used that waiting time to get started with some Bootstrap components. But again, I didn't have a very complete picture at this point, so I didn't choose the optimal Bootstrap component setup. I made it work, but it isn't an ideal approach. And that about summs up the design of the project in general: I made it work, but it should be redesigned for better code organization, better use of Bootstrap compontents, more optimal API calls, etc., not to mention more attention to the look of the website. 
+
+![Weather Dashboard application screen capture](./assets/images/screencap.png)
