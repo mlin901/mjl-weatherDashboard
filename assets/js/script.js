@@ -1,8 +1,7 @@
 let searchButton = $(".btn");
 let cityNumber = 0;
-// var returnedUvi;
 
-// FUNCTION - Makes API call for UVI info <
+// FUNCTION - Makes API call for UVI info 
 function getDataUvi(coordinates) {
   let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,daily,alerts&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCallUvi)
@@ -21,15 +20,17 @@ function getDataUvi(coordinates) {
 }
 
 // FUNCTION - Makes API call to get data for the day
+// ab49e3c91f890388f51d73286073c3a1
 function getData(searchInput, source) {
   let units = "imperial";
+  // Main API call
   let apiCall = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput}&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
   fetch(apiCall)
   .then(function(response){
     if (response.status == 200) {
         response.json().then(function (data) {
           let coordinates = data.coord;
-          // Get UVI using coordinates from previous API call
+          // Query API for UVI using coordinates from previous API call
           let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
           fetch(apiCallUvi)
           .then(function(response){
@@ -49,7 +50,7 @@ function getData(searchInput, source) {
           })
           .catch(function(){
               console.log("Bad Request")
-          })  // end of UVI-retrieval fetch-catch
+          })  // End of UVI-retrieval fetch-catch
         })
     } else {
         alert("No results for " + searchInput);
@@ -57,7 +58,7 @@ function getData(searchInput, source) {
   })
   .catch(function(){
       console.log("Bad Request")
-  })
+  }) // End of primary API call
 }
 
 // FUNCTION - displays data for a new search
@@ -76,7 +77,7 @@ function displaySearchInfo(data, returnedUvi) {
   });
   if (notThere == true) {
     cityNumber++;
-    // The following builds these: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
+    // The following dynamically builds this type of HTML element for the searched city list: <a class="list-group-item list-group-item-action active" id="list-city1-list" data-bs-toggle="list" href="#list-city1" role="tab" aria-controls="city1">city1</a>
     // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added bdlow). This Bootstrap behavior.
     let listItem = $("<a>")
         .addClass("list-group-item list-group-item-action")
@@ -91,7 +92,7 @@ function displaySearchInfo(data, returnedUvi) {
     // Add to local storage
     addToLocalStorage(data.name, cityNumber);
     // $("#nav-tabContent").empty();
-    // The following builds these: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
+    // The following builds this tpe of element for the current forcast: <div class="tab-pane fade" id="list-city2" role="tabpanel" aria-labelledby="list-city2-list">city2...</div>
     // See https://getbootstrap.com/docs/5.0/components/list-group/#javascript-behavior and note that the active item gets an "active" class (in addition to the classes added below). This is Bootstrap behavior.
         // name
     let tabContCityName = $("<div>")
@@ -142,14 +143,15 @@ function displaySearchInfo(data, returnedUvi) {
   $("#city-search").val("");
 }
 
-// FUNCTION - displays data for a clicked list item
+// FUNCTION - displays five-day forcast cards 
 function displayCardInfo(data2) {
   // Remove cards if there are any
   if ($(".cardCol")){
     $( "#cards" ).empty();
   }
-  // Create cards for the next 5 days
+  // Create cards for the next five days
   for (var i = 1; i <= 5; i++) {  
+    // Outer divs needed for Bootstrap cards
     let cardDiv1 = $("<div>")
         .addClass("col-sm-2 cardCol")
         .appendTo("#cards");
@@ -188,7 +190,7 @@ function displayCardInfo(data2) {
   }
 } 
 
-// FUNCTION to convert date - adapted from https://coderrocketfuel.com/article/convert-a-unix-timestamp-to-a-date-in-vanilla-javascript 
+// FUNCTION to convert Linux UTC date into more readable format. Adapted from https://coderrocketfuel.com/article/convert-a-unix-timestamp-to-a-date-in-vanilla-javascript.
 function convertDate(utcDate) {
   let unixTimestamp = utcDate;
   let milliseconds = utcDate * 1000; 
@@ -198,6 +200,7 @@ function convertDate(utcDate) {
   return humanDateFormat;
 }
 
+// FUNCTION to set background color for UVI for current forcast.
 function changeUviColor(uviVal) {
   if (uviVal < 3) {
     return "green";
@@ -212,7 +215,7 @@ function changeUviColor(uviVal) {
   }
 }
 
-// Function to add entry to local storage. Adapted from https://stackoverflow.com/questions/19635077/adding-objects-to-array-in-localstorage/55968743
+// FUNCTION to add entry to local storage. Reference: https://stackoverflow.com/questions/19635077/adding-objects-to-array-in-localstorage/55968743
 function addToLocalStorage(cityName, cityNum) {
   // Parse data previously stored in allEntries
   var existingEntries = JSON.parse(localStorage.getItem("mjlWeather"));
@@ -266,7 +269,6 @@ function initialDisplay() {
       var storedEntry = existingEntries[i];
       let source = "from field search";
       getData(storedEntry.name, source);
-      // getData(storedEntry.i, source);
     }
   }
 }
