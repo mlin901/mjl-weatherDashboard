@@ -31,7 +31,7 @@ function getData(searchInput, source) {
         response.json().then(function (data) {
           let coordinates = data.coord;
           // Query API for UVI using coordinates from previous API call
-          let apiCallUvi = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
+          let apiCallUvi = `http://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&units=${units}&appid=ab49e3c91f890388f51d73286073c3a1`;
           fetch(apiCallUvi)
           .then(function(response){
             if (response.status == 200) {
