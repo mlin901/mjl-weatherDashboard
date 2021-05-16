@@ -17,6 +17,8 @@ This web app includes a search field for city names. When user enters a city nam
 * Saves name of the city to local storage and retrieves saved city names when the page is opened or refreshed.
 * Adds the city name to a list that can be used for future searches.
 
+License: MIT
+
 ## Known issues
 
 There are a few issues/shortcomings that if addressed would improve this application:
